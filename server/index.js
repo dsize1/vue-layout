@@ -1,49 +1,32 @@
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
+
 const Koa = require('koa');
 const cors = require('@koa/cors');
 const Router = require('@koa/router');
+const bodyParser = require('koa-bodyparser');
+
+const logger = require('./middleware/logger');
+
+const testRoute = require('./routes/test/');
+const candlestickRoute = require('./routes/candlestick/');
+const realtimeRoute = require('./routes/realtime/');
 
 const port = 8989;
-
 const app = new Koa();
-
 const router = new Router();
+const useRouter = require('./utils/useRouter')(router);
 
-const oneDay = 1000 * 60 * 60 * 24;
-
-router.get('/api/load', async (ctx, next) => {
-  try {
-    const query = ctx.request.query;
-    console.log(query);
-    const { start, end } = query;
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    if ( endDate - startDate < oneDay * 10 ) {
-      ctx.status = 500;
-    } else {
-      const dayN = (endDate - startDate) / oneDay;
-      const tableData = new Array(dayN).fill(0).map((_, index) => ({
-        name: `name_${index}`,
-        address: `address_${index}`,
-        time: `time_${index}`
-      }))
-      const columnDim = [
-        { title: 'name', align: 'center', style: { color: 'blue', fontWeight: 'bold' } },
-        { title: 'address', align: 'right' },
-        { title: 'time', align: 'left' }
-      ]
-      const body = JSON.stringify({ status: 'ok', data: { data: tableData, columnDim } });
-      ctx.body = body; 
-    }
-  } catch(e) {
-    ctx.status = 500;
-  }
-  await next();
-});
+useRouter(testRoute);
+useRouter(candlestickRoute);
+// useRouter(realtimeRoute);
 
 app
   .use(cors())
+  .use(bodyParser())
+  .use(logger())
   .use(router.routes())
   .use(router.allowedMethods())
   .listen(port);
 
-
+console.log('listening post:', port);
