@@ -1,6 +1,3 @@
-require('es6-promise').polyfill();
-require('isomorphic-fetch');
-
 const Koa = require('koa');
 const cors = require('@koa/cors');
 const Router = require('@koa/router');
@@ -12,16 +9,25 @@ const testRoute = require('./routes/test/');
 const candlestickRoute = require('./routes/candlestick/');
 const realtimeRoute = require('./routes/realtime/');
 
+const openDb = require('./db/openDb');
+
 const port = 8989;
+
+const testAPP = true;
+
 const app = new Koa();
 const router = new Router();
+
 const useRouter = require('./utils/useRouter')(router);
 
 useRouter(testRoute);
 useRouter(candlestickRoute);
 // useRouter(realtimeRoute);
 
-app
+(async () => {
+  app.context.db = await openDb(testAPP);
+
+  app
   .use(cors())
   .use(bodyParser())
   .use(logger())
@@ -29,4 +35,7 @@ app
   .use(router.allowedMethods())
   .listen(port);
 
-console.log('listening post:', port);
+  console.log('listening post:', port);
+})();
+
+

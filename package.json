@@ -16,6 +16,7 @@
     "koa": "^2.13.0",
     "koa-bodyparser": "^2.5.0",
     "rxjs": "^6.6.2",
+    "sqlite": "^3.0.6",
     "vue-grid-layout": "^2.3.8"
   }
 }
