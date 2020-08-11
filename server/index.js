@@ -14,7 +14,7 @@ const initDb = require('./db/initDb');
 
 const port = 8989;
 
-const testSign = true;
+const testSign = false;
 
 const app = new Koa();
 const router = new Router();

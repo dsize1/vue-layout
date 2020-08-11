@@ -1,11 +1,25 @@
 const openDb = require('../../db/openDb');
 
-const queryStocksInfo = async (search, verbose) => {
+const queryStocksInfo = async ({ search, currPage, pageSize }, verbose) => {
   const db = await openDb('stocks', verbose)
-  // todo sql select
-  const data = await db.get('SELECT ')
+  const { total } = await db.get(`
+    SELECT COUNT(*) AS total
+    FROM markets
+    WHERE code LIKE '%${search}%' OR name LIKE '%${search}%'
+  `);
+  const totalPage = Math.ceil(total / pageSize);
+  if (currPage > totalPage) {
+    await db.close();
+    return { data: [], totalPage }
+  }
+  const data = await db.all(`
+    SELECT code, name
+    FROM markets 
+    WHERE code LIKE '%${search}%' OR name LIKE '%${search}%'
+    Limit ${pageSize} OFFSET ${(currPage - 1) * pageSize}
+  `);
   await db.close();
-  return data;
+  return { data, totalPage };
 };
 
 module.exports = queryStocksInfo;
