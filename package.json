@@ -15,8 +15,11 @@
     "isomorphic-fetch": "^2.2.1",
     "koa": "^2.13.0",
     "koa-bodyparser": "^2.5.0",
+    "query-string": "^6.13.1",
+    "ramda": "^0.27.1",
     "rxjs": "^6.6.2",
     "sqlite": "^3.0.6",
-    "vue-grid-layout": "^2.3.8"
+    "vue-grid-layout": "^2.3.8",
+    "xmlhttprequest": "^1.8.0"
   }
 }

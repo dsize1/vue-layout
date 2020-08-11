@@ -6,14 +6,15 @@ const bodyParser = require('koa-bodyparser');
 const logger = require('./middleware/logger');
 
 const testRoute = require('./routes/test/');
+const suggestionsRoute = require('./routes/suggestions/')
 const candlestickRoute = require('./routes/candlestick/');
 const realtimeRoute = require('./routes/realtime/');
 
-const openDb = require('./db/openDb');
+const initDb = require('./db/initDb');
 
 const port = 8989;
 
-const testAPP = true;
+const testSign = true;
 
 const app = new Koa();
 const router = new Router();
@@ -21,11 +22,13 @@ const router = new Router();
 const useRouter = require('./utils/useRouter')(router);
 
 useRouter(testRoute);
-useRouter(candlestickRoute);
+useRouter(suggestionsRoute);
+// useRouter(candlestickRoute);
 // useRouter(realtimeRoute);
 
-(async () => {
-  app.context.db = await openDb(testAPP);
+const main = async () => {
+  await initDb(testSign);
+  app.context.verbose = testSign;
 
   app
   .use(cors())
@@ -36,6 +39,8 @@ useRouter(candlestickRoute);
   .listen(port);
 
   console.log('listening post:', port);
-})();
+};
+
+main();
 
 
