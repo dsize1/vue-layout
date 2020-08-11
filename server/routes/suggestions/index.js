@@ -5,7 +5,7 @@ const getRequestQuery = require('../../utils/getValuesWithDefault');
 const delay = require('../../utils/delay');
 
 const QUERY_PATH = ['request', 'query'];
-const QUERY_KEYS = ['search', 'page', 'pageSize', 'delay']
+const QUERY_KEYS = ['search', 'page', 'pagesize', 'delay']
 const QUERY_DEFAULT = ['', 1, 10, 0];
 
 const suggestions = async (ctx, next) => {
