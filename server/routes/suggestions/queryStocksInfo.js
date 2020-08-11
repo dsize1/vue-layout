@@ -10,7 +10,7 @@ const queryStocksInfo = async ({ search, currPage, pageSize }, verbose) => {
   const totalPage = Math.ceil(total / pageSize);
   if (currPage > totalPage) {
     await db.close();
-    return { data: [], totalPage }
+    return { data: [], totalPage, total }
   }
   const data = await db.all(`
     SELECT code, name
@@ -19,7 +19,7 @@ const queryStocksInfo = async ({ search, currPage, pageSize }, verbose) => {
     Limit ${pageSize} OFFSET ${(currPage - 1) * pageSize}
   `);
   await db.close();
-  return { data, totalPage };
+  return { data, totalPage, total };
 };
 
 module.exports = queryStocksInfo;
