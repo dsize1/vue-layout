@@ -15,6 +15,7 @@ const initDb = require('./db/initDb');
 const port = 8989;
 
 const testSign = false;
+const apikey = 'f6a7d09ad27d2fe2afdb15dc76b15076';
 
 const app = new Koa();
 const router = new Router();
@@ -23,12 +24,13 @@ const useRouter = require('./utils/useRouter')(router);
 
 useRouter(testRoute);
 useRouter(suggestionsRoute);
-// useRouter(candlestickRoute);
+useRouter(candlestickRoute);
 // useRouter(realtimeRoute);
 
 const main = async () => {
-  await initDb(testSign);
+  await initDb(testSign, apikey);
   app.context.verbose = testSign;
+  app.context.apikey = apikey;
 
   app
   .use(cors())
