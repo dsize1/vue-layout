@@ -4,8 +4,6 @@ const openDb = require('./openDb');
 const { get$ } = require('../utils/request');
 const print = require('../utils/print');
 
-const apikey = 'f6a7d09ad27d2fe2afdb15dc76b15076';
-
 const marketsTableName = 'markets';
 const createMarketsTableTable = async (db, data) => {
   const createResult = await db.run(
@@ -18,7 +16,7 @@ const createMarketsTableTable = async (db, data) => {
   }
 };
 
-const initDb = async (verbose) => {
+const initDb = async (verbose, apikey) => {
   try {
     const stocksDb = await openDb('stocks', verbose);
     const initialized = await stocksDb.get('SELECT count(*) FROM sqlite_master WHERE type = $type AND name = $tablename', {
