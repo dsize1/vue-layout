@@ -1,5 +1,11 @@
 const openDb = require('../../db/openDb');
 
+/**
+ * @description: 模糊查询 
+ * @param {object} 查询参数
+ * @param {boolean} 测试标志 
+ * @return {type} 
+ */
 const queryStocksInfo = async ({ search, currPage, pageSize }, verbose) => {
   const db = await openDb('stocks', verbose)
   const { total } = await db.get(`

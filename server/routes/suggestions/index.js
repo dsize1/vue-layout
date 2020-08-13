@@ -8,6 +8,7 @@ const QUERY_PATH = ['request', 'query'];
 const QUERY_KEYS = ['search', 'page', 'pagesize', 'delay']
 const QUERY_DEFAULT = ['', 1, 10, 0];
 
+// 券代码及名称模糊搜索接口
 const suggestions = async (ctx, next) => {
   const [search, currPage, pageSize, ms] = getRequestQuery(QUERY_PATH, QUERY_KEYS, QUERY_DEFAULT)(ctx);
   await delay(ms);

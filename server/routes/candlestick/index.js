@@ -8,6 +8,7 @@ const QUERY_PATH = ['request', 'query'];
 const QUERY_KEYS = ['code', 'start', 'end', 'frequency'];
 const QUERY_DEFAULT = ['', undefined, undefined, 'daily'];
 
+ // 股票历史数据查询
 const candlestick = async (ctx, next) => {
   const [code, start, end, freq] = getRequestQuery(QUERY_PATH, QUERY_KEYS, QUERY_DEFAULT)(ctx);
   if (code === '') {

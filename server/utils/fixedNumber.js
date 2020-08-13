@@ -2,6 +2,12 @@ const R = require('ramda');
 
 const classOf = require('./classOf');
 
+/**
+ * @description: 添加千分位
+ * @param {number | string} 
+ * @param {string} 分隔符
+ * @return {string} 
+ */
 const toCurrency = (num, symbol = ',') => {
   const sign = Number(num) >= 0 ? '' : '-';
   const abs = Number(num) >= 0 ? String(num) : String(num).slice(1);
@@ -12,6 +18,21 @@ const toCurrency = (num, symbol = ',') => {
   return R.isNil(partFloat) ? `${sign}${formatted}` : `${sing}${formatted}.${partFloat}`;
 }
 
+/**
+ * @description: 格式化number 
+ * @param {number}
+ * @param {string} percent类型默认放大100倍['Number', 'Percent']
+ * @param {object} 配置 
+ *  isNilValue: 自定义空值判断函数
+ *  nilVale: 空值展示的字符，默认‘--’
+ *  times: 放大倍数
+ *  decimals：保留小数位数
+ *  separator： 是否需要千分位展示
+ *  separatorSymbol: 自定义千分位符
+ *  prefix: 前缀
+ *  suffix: 后缀               
+ * @return {type} 
+ */
 const fixedNumber = (number, dataType = 'Number', options = null) => {
   const isNilValue = R.prop(options, 'isNilValue');
 
