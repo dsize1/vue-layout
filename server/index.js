@@ -15,6 +15,7 @@ const realtimeRoute = require('./routes/realtime/');
 
 // 初始化数据库
 const initDb = require('./db/initDb');
+const updateCnStocksIndex = require('./db/updateCnStocksIndex');
 
 // 端口
 const port = 8989;
@@ -39,6 +40,9 @@ useRouter(candlestickRoute);
 // 主函数
 const main = async () => {
   await initDb(testSign, apikey);
+
+  updateCnStocksIndex();
+
   app.context.verbose = testSign;
   app.context.apikey = apikey;
 
