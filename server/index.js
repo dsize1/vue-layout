@@ -34,7 +34,7 @@ const useRouter = require('./utils/useRouter')(router);
 useRouter(testRoute);
 useRouter(suggestionsRoute);
 useRouter(candlestickRoute);
-// useRouter(realtimeRoute);
+useRouter(realtimeRoute);
 
 
 // 主函数

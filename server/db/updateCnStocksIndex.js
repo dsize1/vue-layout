@@ -94,6 +94,7 @@ const deleteIndexDb = async (verbose) => {
   try {
     print('delete IndexDb');
     const db = await openDb('stocks', verbose);
+    //只删除T-(5+)的数据
     await db.run('DELETE FROM cn_stocks_index');
     await db.close();
     print('delete IndexDb success');
