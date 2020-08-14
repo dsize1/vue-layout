@@ -41,7 +41,7 @@ useRouter(candlestickRoute);
 const main = async () => {
   await initDb(testSign, apikey);
 
-  updateCnStocksIndex();
+  updateCnStocksIndex(testSign, apikey);
 
   app.context.verbose = testSign;
   app.context.apikey = apikey;

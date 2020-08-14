@@ -20,6 +20,33 @@ const createMarketsTable = async (db, data) => {
     await statement.bind({ $code: item.code, $name: item.name });
     await statement.get();
   }
+  return await statement.finalize();
+};
+
+/**
+ * @description: 建当日股指表
+ * @param {object} 
+ * @return {promise} 
+ */
+const createCnStocksIndexTable = async (db) => {
+  const createResult = await db.run(`
+    CREATE TABLE cn_stocks_index (
+      country TEXT NOT NULL,
+      name TEXT NOT NULL,
+      last REAL,
+      high REAL,
+      low  REAL,
+      change REAL,
+      percent_change REAL,
+      time TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      datetime TEXT NOT NULL,
+      code TEXT NOT NULL,
+      symbol TEXT NOT NULL
+    )
+  `);
+  print('create cn stocks index table', { result: createResult });
+  return createResult;
 };
 
 /**
@@ -43,11 +70,13 @@ const initDb = async (verbose, apikey) => {
         const formatted = R.map(({ symbol, name, exchange }) => ({ code: symbol, name, exchange }), data);
         // 逐条插入性能太差，需要使用事务来完成导入。
         await createMarketsTable(stocksDb, formatted);
+
       }
+      await createCnStocksIndexTable(stocksDb);
     }
     await stocksDb.close();
   } catch (err) {
-    print('open db error', err);
+    print('init db failed', err);
   }
 }
 
