@@ -94,8 +94,9 @@ const deleteIndexDb = async (verbose) => {
   try {
     print('delete IndexDb');
     const db = await openDb('stocks', verbose);
-    //只删除T-(5+)的数据
-    await db.run('DELETE FROM cn_stocks_index');
+    //只删除T-(7+)的数据
+    const last7Day = moment().utcOffset(8).subtract(7, 'day').format('x');
+    await db.run(`DELETE FROM cn_stocks_index WHERE timestamp < ${last7Day}`);
     await db.close();
     print('delete IndexDb success');
   } catch(e) {
