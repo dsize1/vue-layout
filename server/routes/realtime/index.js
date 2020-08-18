@@ -9,8 +9,8 @@ const QUERY_DEFAULT = [''];
 
 const realtime = async (ctx, next) => {
   const now = moment().utcOffset(8);
-  const startDefault = moment(now).set({ hour: 9, minute: 30 }).format(x);
-  const endDefault = moment(now).format(x);
+  const startDefault = moment(now).set({ hour: 9, minute: 30 }).format('x');
+  const endDefault = moment(now).format('x');
   const queryDefault = [...QUERY_DEFAULT, startDefault, endDefault];
   const [code, start, end] = getRequestQuery(QUERY_PATH, QUERY_KEYS, queryDefault)(ctx);
   if (code === '') {
