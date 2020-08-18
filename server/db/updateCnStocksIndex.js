@@ -1,6 +1,6 @@
 const moment = require('moment');
 const { interval } = require('rxjs');
-const { mergeMap, concatMap, tap } = require('rxjs/operators');
+const { mergeMap, takeWhile } = require('rxjs/operators');
 const R = require('ramda');
 
 const { get$ } = require('../utils/request');
@@ -149,22 +149,30 @@ const updateCnstocksIndexDb = (verbose, apikey) => {
   const url = 'https://api.trochil.cn/v1/index/tickers';
   interval(oneMinute)
   .pipe(
+    takeWhile(() => {
+      const now = moment().utcOffset(8);
+      if (!isTradingHours(now)) {
+        print('exceed trading hours', { now });
+        updateCnStocksIndex(verbose, apikey);
+        if (moment(now).isAfter(endTradingHoursPM(now), 'minute')) {
+          const tomorrow8AM = moment(now).add(1, 'days').set({ hour: 8, minute: 0 });
+          const delay = tomorrow8AM.diff(now);
+          print('delete index db', { now, delay });
+          setTimeout(() => deleteIndexDb(verbose), delay);
+        }
+        return false;
+      }
+      return true;
+    }),
     mergeMap(() => {
       return get$(url, { query: { apikey } });
     }),
   )
   .subscribe(([err, resp]) => {
     const now = moment().utcOffset(8);
-    if (!isTradingHours(now)) {
-      print('exceed trading hours', { now });
-      updateCnStocksIndex(verbose, apikey);
-      if (moment(now).isAfter(endTradingHoursPM(now), 'minute')) {
-        const tomorrow8AM = moment(now).add(1, 'days').set({ hour: 8, minute: 0 });
-        const delay = tomorrow8AM.diff(now);
-        print('delete index db', { now, delay });
-        setTimeout(() => deleteIndexDb(verbose), delay);
-      }
-    } else {
+    const localTime = moment(now).format();
+    const localtimestamp = moment(now).format('x');
+    if (!err & resp) {
       const cnStocksIndex = R.reduce((acc, stocksIndex) => {
         if (acc.length >= 2) {
           return acc;
@@ -174,12 +182,32 @@ const updateCnstocksIndexDb = (verbose, apikey) => {
           acc.push({ 
             ...stocksIndex,
             code,
-            time: moment(now).subtract(1, 'seconds').format()
+            time: localTime
           });
         }
         return acc;
       }, [], resp);
       updateIndexDb(verbose, cnStocksIndex);
+    } else {
+      const emptyIndex = [
+        {
+          country: '中国',
+          name: '上证指数',
+          symbol: 'SHCI',
+          code: '000001',
+          time: localTime,
+          timestamp: localtimestamp
+        },
+        {
+          country: '中国',
+          name: '深证成指',
+          symbol: 'SZCI',
+          code: '399001',
+          time: localTime,
+          timestamp: localtimestamp
+        }
+      ];
+      updateIndexDb(verbose, emptyIndex);
     }
   });
 };

@@ -40,7 +40,7 @@ const createCnStocksIndexTable = async (db) => {
       percent_change REAL,
       time TEXT NOT NULL,
       timestamp TEXT NOT NULL,
-      datetime TEXT NOT NULL,
+      datetime TEXT,
       code TEXT NOT NULL,
       symbol TEXT NOT NULL
     )
